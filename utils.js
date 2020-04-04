@@ -12,10 +12,14 @@ const setMark = () => {
   return mark ? 'x' : 'o';
 };
 
-const changeName = (val) => {
+const changeName = (val, ctx) => {
   field = field.map((i) => {
     return i.map(j => {
       if(j.callback_data === val) {
+        if (j.text.includes('x') || j.text.includes('o')) {
+          ctx.answerCbQuery('this field filled', true);
+          return j;
+        }
         return {
           text: setMark(),
           callback_data: j.callback_data,
@@ -51,7 +55,7 @@ const createActions = (bot) => {
     bot.action(setClick(i), ctx => {
       ctx.deleteMessage();
       const val = ctx.update.callback_query.data;
-      changeName(val);
+      changeName(val, ctx);
       sendMessage(ctx);
     });
   }
